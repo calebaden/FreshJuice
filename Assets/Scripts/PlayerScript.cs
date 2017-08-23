@@ -6,6 +6,7 @@ public class PlayerScript : MonoBehaviour
 {
     public static PlayerScript Instance;
     private Rigidbody2D rb;
+    public GameObject trailEffect;
 
     // Jank variables
     public float jankSpeed = 1f;
@@ -18,6 +19,8 @@ public class PlayerScript : MonoBehaviour
     private float moveSpeed;
     public float maxHealth = 100f;
     private float health;
+    public float hitCD = 1f;
+    private float hitTimer;
 
     private void Awake()
     {
@@ -48,7 +51,8 @@ public class PlayerScript : MonoBehaviour
 
     private void Update()
     {
-
+        if (hitTimer > 0)
+            hitTimer -= Time.deltaTime;
     }
 
     // Physics based character movement
@@ -76,10 +80,11 @@ public class PlayerScript : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Checks if the wall has been collided with
-        if (collision.transform.tag == "Wall")
+        if (collision.transform.tag == "Wall" && hitTimer <= 0)
         {
             TakeDamage(collision.relativeVelocity.magnitude);
             GameController.Instance.HitEffects(collision.relativeVelocity.magnitude);
+            hitTimer = hitCD;
         }
     }
 
@@ -97,12 +102,14 @@ public class PlayerScript : MonoBehaviour
     {
         if (isJuice)
         {
+            trailEffect.SetActive(true);
             moveSpeed = juiceSpeed;
             rb.drag = juiceDrag;
             rb.constraints = RigidbodyConstraints2D.None;
         }
         else
         {
+            trailEffect.SetActive(false);
             transform.eulerAngles = Vector3.zero;
             moveSpeed = jankSpeed;
             rb.drag = jankDrag;

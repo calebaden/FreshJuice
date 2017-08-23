@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
+    private AudioController audioScr;
     public LevelController currentLevel;
     public bool isJuicy;
     public CameraScript camScr;
@@ -41,6 +42,7 @@ public class GameController : MonoBehaviour
     private void Start ()
     {
         PlayerScript.Instance.enabled = false;
+        audioScr = GetComponent<AudioController>();
         StartLevel();
     }
 	
@@ -66,6 +68,7 @@ public class GameController : MonoBehaviour
     {
         isJuicy = !isJuicy;
         PlayerScript.Instance.CallJuice(isJuicy);
+        audioScr.CallJuice(isJuicy);
         camScr.CallJuice(isJuicy);
     }
 
@@ -97,7 +100,9 @@ public class GameController : MonoBehaviour
         {
             currentLevel.Flash();
             Camera.main.GetComponent<CameraShake>().CallShake(amount);
+            audioScr.PlaySingle(0, amount);
             GameObject newEffect = Instantiate(hitEffect, PlayerScript.Instance.transform.position, PlayerScript.Instance.transform.rotation);
+            newEffect.GetComponent<ParticleSystem>().startSize = amount / 5;
             Destroy(newEffect, 2);
         }
     }
