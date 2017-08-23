@@ -6,7 +6,10 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
+    public LevelController currentLevel;
     public bool isJuicy;
+    public CameraScript camScr;
+    public GameObject hitEffect;
 
     // HUD variables
     public Slider healthSlider;
@@ -17,8 +20,6 @@ public class GameController : MonoBehaviour
     public GameObject startPanel;
     public GameObject finishPanel;
     public Text levelTimeText;
-    public Text healthPentalty;
-    public Text totalTimeText;
 
     // Level variables
     private bool isPlaying;
@@ -40,7 +41,8 @@ public class GameController : MonoBehaviour
     private void Start ()
     {
         PlayerScript.Instance.enabled = false;
-	}
+        StartLevel();
+    }
 	
 	// Update is called once per frame
 	private void Update ()
@@ -48,15 +50,15 @@ public class GameController : MonoBehaviour
 		if (Input.GetButtonDown("Fire1"))
             JuiceSwitch();
 
-        if (Input.GetButtonDown("Submit"))
-            StartLevel();
+        /*if (Input.GetButtonDown("Submit"))
+            StartLevel();*/
 
         if (isPlaying)
             levelTime += Time.deltaTime;
 
         timeText.text = levelTime.ToString("F2");
         healthSlider.value = PlayerScript.Instance.GetHealth01();
-        speedText.text = PlayerScript.Instance.GetVelocityMagnitude().ToString("F2");
+        speedText.text = PlayerScript.Instance.GetVelocity().magnitude.ToString("F2");
 	}
 
     // Function that activates / deactivates the juice elements
@@ -64,7 +66,7 @@ public class GameController : MonoBehaviour
     {
         isJuicy = !isJuicy;
         PlayerScript.Instance.CallJuice(isJuicy);
-        Camera.main.GetComponent<CameraScript>().CallJuice(isJuicy);
+        camScr.CallJuice(isJuicy);
     }
 
     // Function called when completing the level
@@ -73,9 +75,7 @@ public class GameController : MonoBehaviour
         isPlaying = false;
         float hp = PlayerScript.Instance.GetHealth01();
         finishPanel.SetActive(true);
-        levelTimeText.text = "Level Time: = " + levelTime.ToString("F2") + " seconds";
-        healthPentalty.text = "Health Penalty: = " + (hp * 10).ToString("F2") + " seconds";
-        totalTimeText.text = "Total Time: = " + ((hp * 10) + levelTime).ToString("F2") + " seconds";
+        levelTimeText.text = levelTime.ToString("F2") + "    seconds";
     }
 
     // Function called when player dies
@@ -89,5 +89,16 @@ public class GameController : MonoBehaviour
         PlayerScript.Instance.enabled = true;
         startPanel.SetActive(false);
         isPlaying = true;
+    }
+
+    public void HitEffects (float amount)
+    {
+        if (isJuicy)
+        {
+            currentLevel.Flash();
+            Camera.main.GetComponent<CameraShake>().CallShake(amount);
+            GameObject newEffect = Instantiate(hitEffect, PlayerScript.Instance.transform.position, PlayerScript.Instance.transform.rotation);
+            Destroy(newEffect, 2);
+        }
     }
 }

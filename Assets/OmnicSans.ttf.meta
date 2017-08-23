@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: e6d8c10821c58fc4786a37d08abb7adb
+timeCreated: 1503434613
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Omnic Sans
+  fontNames:
+  - Omnic Sans
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

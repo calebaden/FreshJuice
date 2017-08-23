@@ -79,6 +79,7 @@ public class PlayerScript : MonoBehaviour
         if (collision.transform.tag == "Wall")
         {
             TakeDamage(collision.relativeVelocity.magnitude);
+            GameController.Instance.HitEffects(collision.relativeVelocity.magnitude);
         }
     }
 
@@ -109,9 +110,9 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    public float GetVelocityMagnitude ()
+    public Vector2 GetVelocity ()
     {
-        return rb.velocity.magnitude;
+        return rb.velocity;
     }
 
     public float GetHealth01 ()
